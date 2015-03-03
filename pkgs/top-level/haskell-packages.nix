@@ -2713,6 +2713,8 @@ self : let callPackage = x : y : modifyPrio (newScope self x y); in
 
   tuple = callPackage ../development/libraries/haskell/tuple {};
 
+  turtle = callPackage ../development/libraries/haskell/turtle {};
+
   twitterConduit = callPackage ../development/libraries/haskell/twitter-conduit {};
 
   twitterTypes = callPackage ../development/libraries/haskell/twitter-types {};
