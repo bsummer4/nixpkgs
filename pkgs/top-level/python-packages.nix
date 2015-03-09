@@ -5073,7 +5073,6 @@ let
     };
   };
 
-
   gyp = buildPythonPackage rec {
     rev = "1977";
     name = "gyp-r${rev}";
@@ -7444,10 +7443,10 @@ let
 
   pgcli = buildPythonPackage rec {
     name = "pgcli-${version}";
-    version = "0.16.0";
+    version = "0.16.1";
 
     src = pkgs.fetchFromGitHub {
-      sha256 = "05xqv3z47xk8v4pbhkavbw49wxq4i3zg49v4g074spqgvcs4jy1n";
+      sha256 = "1sysx67inf0fcfa4qhqcii97y59zpg98f4kcvz15rlbnsi357css";
       rev = "v${version}";
       repo = "pgcli";
       owner = "amjith";
@@ -10513,9 +10512,6 @@ let
   sphinxcontrib_httpdomain = buildPythonPackage (rec {
     name = "sphinxcontrib-httpdomain-1.3.0";
 
-    # See issue #6548
-    disabled = isPyPy;
-
     # Check is disabled due to this issue:
     # https://bitbucket.org/pypa/setuptools/issue/137/typeerror-unorderable-types-str-nonetype
     doCheck = false;
@@ -10539,9 +10535,6 @@ let
 
   sphinxcontrib_plantuml = buildPythonPackage (rec {
     name = "sphinxcontrib-plantuml-0.5";
-
-    # See issue #6548
-    disabled = isPyPy;
 
     src = pkgs.fetchurl {
       url = "https://pypi.python.org/packages/source/s/sphinxcontrib-plantuml/${name}.tar.gz";
@@ -13394,12 +13387,12 @@ let
     };
   };
 
-  pythonefl_1_12 = buildPythonPackage rec {
+  pythonefl_1_13 = buildPythonPackage rec {
     name = "python-efl-${version}";
-    version = "1.12.0";
+    version = "1.13.0";
     src = pkgs.fetchurl {
-      url = "http://download.enlightenment.org/rel/bindings/python/${name}.tar.gz";
-      sha256 = "0rxv5nrqg5c2l93ns2k6gjil1y7qq6amfh5slkarm3kv8fzk17xv";
+      url = "http://download.enlightenment.org/rel/bindings/python/${name}.tar.bz2";
+      sha256 = "0yy4v0f04dgdz21wd2c09x9w6lzsbq6g12s8895laln44l5aqd82";
     };
     preConfigure = ''
       export NIX_CFLAGS_COMPILE="-I${pkgs.e19.efl}/include/eo-1 -I${pkgs.e19.efl}/include/eina-1 -I${pkgs.e19.efl}/include/eina-1/eina -I${pkgs.e19.efl}/include/evas-1 -I${self.dbus}/include/dbus-1.0 -I${pkgs.e19.efl}/include/efl-1 -I${pkgs.e19.efl}/include/eet-1 -I${pkgs.e19.efl}/include/ecore-1 -I${pkgs.e19.efl}/include/ecore-evas-1 -I${pkgs.e19.efl}/include/ecore-file-1 -I${pkgs.e19.efl}/include/ecore-input-1 -I${pkgs.e19.efl}/include/ecore-imf-1 -I${pkgs.e19.efl}/include/ecore-con-1 -I${pkgs.e19.efl}/include/edje-1 -I${pkgs.e19.efl}/include/eldbus-1 -I${pkgs.e19.efl}/include/efreet-1 -I${pkgs.e19.efl}/include/ethumb-client-1 -I${pkgs.e19.efl}/include/ethumb-1 -I${pkgs.e19.efl}/include/ecore-x-1 $NIX_CFLAGS_COMPILE"
@@ -13408,7 +13401,7 @@ let
     meta = {
       description = "Python bindings for EFL and Elementary.";
       homepage = http://enlightenment.org/;
-      maintainers = [ stdenv.lib.maintainers.matejc ];
+      maintainers = [ stdenv.lib.maintainers.matejc stdenv.lib.maintainers.tstrobel ];
       platforms = stdenv.lib.platforms.linux;
       license = stdenv.lib.licenses.gpl3;
     };
@@ -13765,7 +13758,7 @@ let
       license = licenses.mit;
     };
   };
-  
+
   html2text = buildPythonPackage rec {
     name = "html2text-2014.12.29";
 

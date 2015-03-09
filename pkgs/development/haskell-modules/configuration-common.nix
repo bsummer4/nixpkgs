@@ -57,6 +57,9 @@ self: super: {
     '';
   });
 
+  # The package doesn't know about the AL include hierarchy.
+  al = appendConfigureFlag super.al "--extra-include-dirs=${pkgs.openal}/include/AL";
+
   # Depends on code distributed under a non-free license.
   bindings-yices = dontDistribute super.bindings-yices;
   yices = dontDistribute super.yices;
@@ -114,9 +117,11 @@ self: super: {
   hxt = dontHaddock super.hxt;                                  # https://github.com/UweSchmidt/hxt/issues/38
   markdown-unlit = dontHaddock super.markdown-unlit;
   network-conduit = dontHaddock super.network-conduit;
+  shakespeare-js = dontHaddock super.shakespeare-js;
   shakespeare-text = dontHaddock super.shakespeare-text;
   types-compat = dontHaddock super.types-compat;                # https://github.com/philopon/apiary/issues/15
   wai-test = dontHaddock super.wai-test;
+  zlib-conduit = dontHaddock super.zlib-conduit;
 
   # jailbreak doesn't get the job done because the Cabal file uses conditionals a lot.
   darcs = overrideCabal super.darcs (drv: {
@@ -149,12 +154,6 @@ self: super: {
   # FSEvents API is very buggy and tests are unreliable. See
   # http://openradar.appspot.com/10207999 and similar issues
   fsnotify = if pkgs.stdenv.isDarwin then dontCheck super.fsnotify else super.fsnotify;
-
-  # Doesn't properly handle nonsense byte sequences on HFS+
-  # https://github.com/fpco/haskell-filesystem/issues/5
-  system-fileio = if pkgs.stdenv.isDarwin
-    then dontCheck super.system-fileio
-    else super.system-fileio;
 
   # Prevents needing to add security_tool as a build tool to all of x509-system's
   # dependencies.
@@ -221,17 +220,22 @@ self: super: {
   # These packages try to execute non-existent external programs.
   cmaes = dontCheck super.cmaes;                        # http://hydra.cryp.to/build/498725/log/raw
   dbmigrations = dontCheck super.dbmigrations;
+  euler = dontCheck super.euler;                        # https://github.com/decomputed/euler/issues/1
   filestore = dontCheck super.filestore;
   graceful = dontCheck super.graceful;
   hakyll = dontCheck super.hakyll;
   Hclip = dontCheck super.Hclip;
   HList = dontCheck super.HList;
   memcached-binary = dontCheck super.memcached-binary;
+  persistent-zookeeper = dontCheck super.persistent-zookeeper;
+  pocket-dns = dontCheck super.pocket-dns;
   postgresql-simple = dontCheck super.postgresql-simple;
   postgrest = dontCheck super.postgrest;
   snowball = dontCheck super.snowball;
+  test-sandbox = dontCheck super.test-sandbox;
+  users-postgresql-simple = dontCheck super.users-postgresql-simple;
   wai-middleware-hmac = dontCheck super.wai-middleware-hmac;
-  wai-middleware-throttle = dontCheck super.wai-middleware-throttle;
+  wai-middleware-throttle = dontCheck super.wai-middleware-throttle; # https://github.com/creichert/wai-middleware-throttle/issues/1
   xmlgen = dontCheck super.xmlgen;
 
   # These packages try to access the network.
@@ -326,6 +330,7 @@ self: super: {
   hedn = dontCheck super.hedn;
   hgdbmi = dontCheck super.hgdbmi;
   hi = dontCheck super.hi;
+  hierarchical-clustering = dontCheck super.hierarchical-clustering;
   hmatrix-tests = dontCheck super.hmatrix-tests;
   hPDB-examples = dontCheck super.hPDB-examples;
   hquery = dontCheck super.hquery;
@@ -363,7 +368,7 @@ self: super: {
   persistent-redis = dontCheck super.persistent-redis;
   pipes-extra = dontCheck super.pipes-extra;
   pipes-websockets = dontCheck super.pipes-websockets;
-  postgresql-binary = dontCheck super.postgresql-binary;# needs a running postgresql server
+  postgresql-binary = dontCheck super.postgresql-binary; # needs a running postgresql server
   postgresql-simple-migration = dontCheck super.postgresql-simple-migration;
   process-streaming = dontCheck super.process-streaming;
   punycode = dontCheck super.punycode;
@@ -391,7 +396,6 @@ self: super: {
   WebBits = dontCheck super.WebBits;                    # http://hydra.cryp.to/build/499604/log/raw
   webdriver-angular = dontCheck super.webdriver-angular;
   webdriver = dontCheck super.webdriver;
-  xcffib = dontCheck super.xcffib;
   xsd = dontCheck super.xsd;
 
   # https://bitbucket.org/wuzzeb/webdriver-utils/issue/1/hspec-webdriver-101-cant-compile-its-test
@@ -430,9 +434,6 @@ self: super: {
 
   # https://github.com/vincenthz/hs-crypto-pubkey/issues/20
   crypto-pubkey = dontCheck super.crypto-pubkey;
-
-  # https://github.com/rrnewton/haskell-lockfree/issues/44
-  chaselev-deque = markBrokenVersion "0.5.0.3" super.chaselev-deque;
 
   # https://github.com/zouppen/stratum-tool/issues/14
   stratum-tool = markBrokenVersion "0.0.4" super.stratum-tool;
@@ -507,9 +508,6 @@ self: super: {
   # https://github.com/NixOS/nixpkgs/issues/6350
   paypal-adaptive-hoops = overrideCabal super.paypal-adaptive-hoops (drv: { testTarget = "local"; });
 
-  # https://github.com/anton-k/temporal-csound/issues/2
-  temporal-csound = markBrokenVersion "0.4.1" super.temporal-csound;
-
   # https://github.com/seanparsons/wiring/issues/1
   wiring = markBrokenVersion super.wiring;
 
@@ -524,6 +522,7 @@ self: super: {
 
   # Depends on broken lmdb package.
   vcache = markBroken super.vcache;
+  vcache-trie = markBroken super.vcache-trie;
 
   # https://github.com/afcowie/http-streams/issues/80
   http-streams = dontCheck super.http-streams;
@@ -540,7 +539,6 @@ self: super: {
   wxcore = super.wxcore.override { wxGTK = pkgs.wxGTK29; };
 
   # Depends on QuickCheck 1.x.
-  ersatz = dontCheck (super.ersatz.override { QuickCheck = self.QuickCheck_1_2_0_1; }); # https://github.com/ekmett/ersatz/issues/8
   HaVSA = super.HaVSA.override { QuickCheck = self.QuickCheck_1_2_0_1; };
   test-framework-quickcheck = super.test-framework-quickcheck.override { QuickCheck = self.QuickCheck_1_2_0_1; };
 
@@ -571,7 +569,6 @@ self: super: {
   karakuri = markBroken super.karakuri;
 
   # Upstream notified by e-mail.
-  snowglobe = markBroken super.snowglobe;
   gearbox = markBroken super.gearbox;
 
   # https://github.com/deech/fltkhs/issues/7
@@ -589,6 +586,50 @@ self: super: {
   lambdabot-novelty-plugins = markBroken super.lambdabot-novelty-plugins;
   lambdabot-reference-plugins = markBroken super.lambdabot-reference-plugins;
   lambdabot-social-plugins = markBroken super.lambdabot-social-plugins;
+
+  # Upstream provides no issue tracker and no contact details.
+  vivid = markBroken super.vivid;
+
+  # Test suite wants to connect to $DISPLAY.
+  hsqml = dontCheck super.hsqml;
+
+  # https://github.com/megantti/rtorrent-rpc/issues/1
+  rtorrent-rpc = markBroken super.rtorrent-rpc;
+
+  # https://github.com/PaulJohnson/geodetics/issues/1
+  geodetics = dontCheck super.geodetics;
+
+  # https://github.com/AndrewRademacher/aeson-casing/issues/1
+  aeson-casing = dontCheck super.aeson-casing;
+
+  # https://github.com/junjihashimoto/test-sandbox-compose/issues/2
+  test-sandbox-compose = dontCheck super.test-sandbox-compose;
+
+  # Broken by GLUT update.
+  Monadius = markBroken super.Monadius;
+
+  # We don't have the groonga package these libraries bind to.
+  haroonga = markBroken super.haroonga;
+  haroonga-httpd = markBroken super.haroonga-httpd;
+
+  # Cannot find pkg-config data for "webkit-1.0".
+  webkit = markBroken super.webkit;
+  websnap = markBroken super.websnap;
+
+  # Build is broken and no contact info available.
+  hopenpgp-tools = markBroken super.hopenpgp-tools;
+
+  # https://github.com/hunt-framework/hunt/issues/99
+  hunt-server = markBrokenVersion "0.3.0.2" super.hunt-server;
+
+  # https://github.com/bjpop/blip/issues/16
+  blip = markBroken super.blip;
+
+  # https://github.com/tych0/xcffib/issues/37
+  xcffib = markBroken super.xcffib;
+
+  # https://github.com/snapframework/snap/issues/141
+  # snap = overrideCabal super.snap (drv: { preConfigure = "sed -i -e 's|lens .*<4.8|lens|' snap.cabal"; });
 
 } // {
 
